@@ -3,7 +3,7 @@ package com.example.bloghw4.post.service;
 import java.util.List;
 
 import com.example.bloghw4.global.BaseResponseDTO;
-import com.example.bloghw4.jwtutil.UserDetails;
+import com.example.bloghw4.global.jwtutil.UserDetails;
 import com.example.bloghw4.post.dto.PostRequestDTO;
 import com.example.bloghw4.post.dto.PostResponseDTO;
 

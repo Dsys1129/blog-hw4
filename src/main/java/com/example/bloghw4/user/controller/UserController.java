@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bloghw4.global.BaseResponseDTO;
-import com.example.bloghw4.jwtutil.JwtProvider;
+import com.example.bloghw4.global.jwtutil.JwtProvider;
 import com.example.bloghw4.user.dto.LoginResponseDTO;
 import com.example.bloghw4.user.dto.RefreshTokenResponseDTO;
 import com.example.bloghw4.user.dto.UserRequestDTO;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class UserController {
 
     private final UserService userService;
@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/login")
+    // @PostMapping("/login")
     public ResponseEntity<BaseResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
         LoginResponseDTO loginResponse = userService.login(userRequestDTO);
         BaseResponseDTO responseBody = new BaseResponseDTO(loginResponse.getMsg(), loginResponse.getStatus());

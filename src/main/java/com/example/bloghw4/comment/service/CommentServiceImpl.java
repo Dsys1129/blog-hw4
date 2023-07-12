@@ -9,7 +9,7 @@ import com.example.bloghw4.comment.entity.Comment;
 import com.example.bloghw4.comment.exception.CommentNotFoundException;
 import com.example.bloghw4.comment.repository.CommentRepository;
 import com.example.bloghw4.global.BaseResponseDTO;
-import com.example.bloghw4.jwtutil.UserDetails;
+import com.example.bloghw4.global.jwtutil.UserDetails;
 import com.example.bloghw4.post.entity.Post;
 import com.example.bloghw4.post.exception.PermissionException;
 import com.example.bloghw4.post.exception.PostNotFoundException;
@@ -35,8 +35,8 @@ public class CommentServiceImpl implements CommentService {
         User user = getUserByUsername(userDetails.getUsername());
         Post post = getPostById(postId);
         Comment comment = Comment.builder()
-            .post(post)
             .user(user)
+            .post(post)
             .contents(commentRequestDTO.getContents())
             .build();
         commentRepository.save(comment);

@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.bloghw4.comment.exception.CommentNotFoundException;
 import com.example.bloghw4.global.exception.dto.ExceptionDTO;
 import com.example.bloghw4.post.exception.PermissionException;
 import com.example.bloghw4.post.exception.PostNotFoundException;
@@ -18,11 +19,15 @@ import com.example.bloghw4.user.exception.RefreshTokenExpiredException;
 import com.example.bloghw4.user.exception.UserDuplicationException;
 import com.example.bloghw4.user.exception.UserNotFoundException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionDTO> runtimeExceptionHandler(Exception e){
+        log.error(e.getMessage());
         Map<String, String> errors = Collections.singletonMap("error","RuntimeException occurred");
         ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -64,6 +69,14 @@ public class GlobalExceptionHandler {
     // 게시글 정보 없음
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<ExceptionDTO> postNotFoundExceptionHandler(PostNotFoundException e){
+        Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
+        ExceptionDTO errorResponse = new ExceptionDTO("false",404, errors);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    // 댓글 정보 없음
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<ExceptionDTO> commentNotFoundExceptionHandler(CommentNotFoundException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
         ExceptionDTO errorResponse = new ExceptionDTO("false",404, errors);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);

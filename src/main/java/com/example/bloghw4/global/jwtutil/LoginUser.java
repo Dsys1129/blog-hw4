@@ -1,4 +1,4 @@
-package com.example.bloghw4.jwtutil;
+package com.example.bloghw4.global.jwtutil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

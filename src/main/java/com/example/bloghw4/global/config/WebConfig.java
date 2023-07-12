@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.example.bloghw4.jwtutil.LoginUserArgumentResolver;
+import com.example.bloghw4.global.jwtutil.LoginUserArgumentResolver;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

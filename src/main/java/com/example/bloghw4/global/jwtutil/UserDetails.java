@@ -1,4 +1,4 @@
-package com.example.bloghw4.jwtutil;
+package com.example.bloghw4.global.jwtutil;
 
 import com.example.bloghw4.user.entity.UserRole;
 

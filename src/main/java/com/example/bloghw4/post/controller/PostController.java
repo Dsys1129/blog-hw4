@@ -14,15 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bloghw4.global.BaseResponseDTO;
-import com.example.bloghw4.jwtutil.LoginUser;
-import com.example.bloghw4.jwtutil.UserDetails;
+import com.example.bloghw4.global.jwtutil.LoginUser;
+import com.example.bloghw4.global.jwtutil.UserDetails;
 import com.example.bloghw4.post.dto.PostRequestDTO;
 import com.example.bloghw4.post.dto.PostResponseDTO;
 import com.example.bloghw4.post.service.PostService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
@@ -34,6 +36,7 @@ public class PostController {
     // 게시글 생성
     @PostMapping("/posts")
     public ResponseEntity<PostResponseDTO> createPost(@Valid @RequestBody PostRequestDTO postRequestDTO, @LoginUser UserDetails userDetails) {
+        log.info("userDetails = {}, {}", userDetails.getUsername(), userDetails.getUserRole());
         PostResponseDTO response = postService.createPost(postRequestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

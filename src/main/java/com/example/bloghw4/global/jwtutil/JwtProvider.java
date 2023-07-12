@@ -1,4 +1,4 @@
-package com.example.bloghw4.jwtutil;
+package com.example.bloghw4.global.jwtutil;
 
 import java.security.Key;
 import java.util.Base64;
@@ -7,6 +7,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +22,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtProvider {
@@ -53,13 +55,13 @@ public class JwtProvider {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + expiredTime)) // 만료 시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+            Jwts.builder()
+                .setSubject(username) // 사용자 식별자값(ID)
+                .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+                .setExpiration(new Date(date.getTime() + expiredTime)) // 만료 시간
+                .setIssuedAt(date) // 발급일
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
     }
 
     public String createAccessToken(String username, UserRole role) {
@@ -75,8 +77,9 @@ public class JwtProvider {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
+
         logger.error("Not Found Token");
-        throw new NullPointerException("토큰이 유효하지 않습니다.");
+        throw new IllegalArgumentException("잘못된 요청입니다.");
     }
 
     // 토큰 검증
@@ -86,24 +89,29 @@ public class JwtProvider {
 
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
+            throw new JwtAuthenticationException("토큰이 유효하지 않습니다.", e);
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
-            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
+            throw new JwtAuthenticationException("토큰이 유효하지 않습니다.", e);
         } catch (UnsupportedJwtException e) {
             logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
+            throw new JwtAuthenticationException("토큰이 유효하지 않습니다.", e);
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
+            throw new JwtAuthenticationException("토큰이 유효하지 않습니다.", e);
         } catch (RuntimeException e){
             logger.error("An unknown error occurred, 알 수 없는 오류가 발생했습니다.");
-            throw new TokenValidException("알 수 없는 오류가 발생했습니다.", e);
+            throw new JwtAuthenticationException("알 수 없는 오류가 발생했습니다.", e);
         }
     }
 
     // 토큰에서 사용자 정보 추출
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public void addJwtToHeader(String token, HttpServletResponse response) {
+        response.setHeader("Authorization", token);
+        response.setStatus(HttpStatus.OK.value());
     }
 }

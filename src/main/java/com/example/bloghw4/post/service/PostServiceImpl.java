@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bloghw4.global.BaseResponseDTO;
-import com.example.bloghw4.jwtutil.UserDetails;
+import com.example.bloghw4.global.jwtutil.UserDetails;
 import com.example.bloghw4.post.dto.PostRequestDTO;
 import com.example.bloghw4.post.dto.PostResponseDTO;
 import com.example.bloghw4.post.entity.Post;
