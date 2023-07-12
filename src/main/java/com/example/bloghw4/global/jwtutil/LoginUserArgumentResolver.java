@@ -1,15 +1,14 @@
-package com.example.bloghw4.jwtutil;
+package com.example.bloghw4.global.jwtutil;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import jakarta.servlet.http.HttpServletRequest;
-
+import com.example.bloghw4.global.security.CustomUserDetails;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -22,7 +21,12 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getAttribute("user");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null){
+            CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+            return new UserDetails(customUserDetails.getUser().getUsername(), customUserDetails.getUser().getUserRole());
+        }
+        return null;
     }
 }
+
